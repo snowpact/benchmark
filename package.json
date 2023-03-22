@@ -1,0 +1,15 @@
+{
+  "name": "@snowpact/benchmark",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./benchmark.js"
+  },
+  "author": "Murat Avcı",
+  "license": "ISC",
+  "dependencies": {
+    "@types/benchmark": "^2.1.2",
+    "benchmark": "^2.1.4"
+  }
+}
