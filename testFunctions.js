@@ -1,15 +1,5 @@
-function groupStacks(expertises) {
-    var stackItems = expertises.map(function (expertise) {
-        return ({
-            category: expertise.category,
-            title: expertise.name,
-            alt: expertise.name,
-            // image: SanityClient.urlFor(expertise.icon),
-            link: 'expertise/' + expertise.slug.current,
-            grayscale: !expertise.mastered
-        });
-    });
-    var uniqueCategoryNames = stackItems.reduce(function (categories, item) {
+function groupStacksAlternative1(expertises) {
+    var uniqueCategoryNames = expertises.reduce(function (categories, item) {
         if (item.category) {
             if (!categories.includes(item.category)) {
                 categories.push(item.category);
@@ -21,36 +11,26 @@ function groupStacks(expertises) {
     return uniqueCategoryNames.map(function (category) {
         return ({
             stackTitle: category,
-            items: stackItems
-                .filter(function (stack) { return stack.category === category; })
-                .filter(function (item) { return !item.grayscale; })
-                .concat(stackItems.filter(function (stack) { return stack.category === category; }).filter(function (item) { return item.grayscale; }))
+            items: expertises
+                .filter(function (stack) { return stack.category === category && !stack.mastered; })
+                .concat(
+                    expertises.filter(function (stack) { return stack.category === category && stack.mastered; })
+                )
         });
     });
 }
 
-function groupStacksAlternative(expertises) {
-    var stackItems = expertises.map(function (expertise) {
-        return ({
-            category: expertise.category,
-            title: expertise.name,
-            alt: expertise.name,
-            // image: SanityClient.urlFor(expertise.icon),
-            link: 'expertise/' + expertise.slug.current,
-            grayscale: !expertise.mastered
-        });
-    });
-    var sortedStacks = stackItems.sort(function (a, b) {
-        if (!a.grayscale && b.grayscale) {
+function groupStacksAlternative2(expertises) {
+    var sortedStacks = expertises.sort(function (a, b) {
+        if (!a.mastered && b.mastered) {
             return 1;
         }
-        else if (a.grayscale && !b.grayscale) {
+        else if (a.mastered && !b.mastered) {
             return -1;
         }
         return 0;
     });
-    // const uniqueCategoryNames: string[] = stackItems.filter((element, index) => stackItems.indexOf(element) === index);
-    var uniqueCategoryNames = stackItems.reduce(function (categories, item) {
+    var uniqueCategoryNames = expertises.reduce(function (categories, item) {
         if (item.category) {
             if (!categories.includes(item.category)) {
                 categories.push(item.category);
@@ -66,27 +46,19 @@ function groupStacksAlternative(expertises) {
     });
     return unsortedStacks;
 }
-function groupStacksAlternative2(expertises) {
-    var stackItems = expertises.map(function (expertise) {
-        return ({
-            category: expertise.category,
-            title: expertise.name,
-            alt: expertise.name,
-            // image: SanityClient.urlFor(expertise.icon),
-            link: 'expertise/' + expertise.slug.current,
-            grayscale: !expertise.mastered
-        });
-    });
-    var sortedStacks = stackItems.sort(function (a, b) {
-        if (!a.grayscale && b.grayscale) {
+
+function groupStacksAlternative3(expertises) {
+    var sortedStacks = expertises.sort(function (a, b) {
+        if (!a.mastered && b.mastered) {
             return -1;
         }
-        else if (a.grayscale && !b.grayscale) {
+        else if (a.mastered && !b.mastered) {
             return 1;
         }
         return 0;
     });
-    var stackDictionary = stackItems.reduce(function (accumulator, item) {
+
+    var stackDictionary = expertises.reduce(function (accumulator, item) {
         if (!item.category) {
             return accumulator;
         }
@@ -96,6 +68,7 @@ function groupStacksAlternative2(expertises) {
         accumulator[item.category] = sortedStacks.filter(function (stack) { return stack.category === item.category; });
         return accumulator;
     }, {});
+
     return Object.keys(stackDictionary).map(function (key) {
         return ({
             stackTitle: key,
@@ -105,7 +78,7 @@ function groupStacksAlternative2(expertises) {
 }
 
 module.exports = {
-    groupStacks,
-    groupStacksAlternative,
-    groupStacksAlternative2
+    groupStacksAlternative1,
+    groupStacksAlternative2,
+    groupStacksAlternative3,
 }
